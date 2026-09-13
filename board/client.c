@@ -1,13 +1,16 @@
 /*****************************************************************************
  * 文件名称：client.c
- * 运行平台：GEC6818 开发板（ARM Linux，板载 800x480 LCD）
- * 功能描述：AI 语音助手【板端客户端】
- *      1. 键盘输入 1 后，调用板端 ALSA 工具 arecord 录制 3 秒语音
- *         （16kHz、单声道、16bit、WAV 格式，讯飞 IAT 要求的格式）
- *      2. 通过 TCP 把录好的 cmd.wav 上传给电脑（WSL）上的服务器
- *      3. 等待服务器返回：讯飞语音听写 + 智谱大模型处理后的 AI 回答
- *      4. 调用 libfont.a 字库，把 AI 回答显示到 LCD 屏幕上（自动换行）
- *      5. 循环对话，输入 0 退出
+ * 运行平台：GEC6818 开发板（ARM Linux，板载 800x480 电容触摸屏 LCD）
+ * 功能描述：AI 语音助手【板端客户端 · 触摸屏交互版】
+ *      1.在 LCD 上显示触摸界面，手指点击【开始对话】按钮后，调用板端 ALSA
+ *         工具 arecord 录制 3 秒语音（16kHz、单声道、16bit、WAV，讯飞 IAT 要求）
+ *      2.通过 TCP 把录好的 cmd.wav 上传给电脑（WSL）上的服务器
+ *      3.等待服务器返回：讯飞语音听写 + 智谱大模型处理后的 AI 回答
+ *      4.调用 libfont.a 字库，把 AI 回答显示到 LCD 屏幕上（自动换行）
+ *      5.回答页可点【继续提问】进入下一轮，或点【退出】结束程序
+ *         —— 全程只需点屏幕，不再需要在终端敲键盘输入 1/0
+ *
+ * 界面与触摸实现：见 touch_ui.c / touch_ui.h（gslX680，/dev/input/event0）
  *
  * 通信协议（与 server.c 严格对应，一条 TCP 连接完成全部流程）：
  *      板端 -> 服务器 : 文件名长度(4字节,网络字节序)
@@ -39,7 +42,8 @@
 #include <sys/mman.h>
 #include <sys/types.h>
 
-#include "font.h"   /* 板端 TTF 字库接口（libfont.a），LCD 显示汉字用 */
+#include "font.h"       /* 板端 TTF 字库接口（libfont.a），LCD 显示汉字用 */
+#include "touch_ui.h"   /* 触摸屏 + 按钮交互界面接口 */
 
 /*===========================  用户配置区（按需修改）  ===========================*/
 #define SERVER_IP       "169.254.68.229"   /* 电脑(WSL服务器)的 IP：实测 169.254.68.229 */
@@ -59,20 +63,46 @@
 #define LCD_DEV         "/dev/fb0"          /* LCD 帧缓冲设备节点 */
 #define LCD_WIDTH       800                 /* LCD 宽（像素） */
 #define LCD_HEIGHT      480                 /* LCD 高（像素） */
-#define FONT_PIXELS     32                  /* 字号（像素） */
-#define LINE_HEIGHT     40                  /* 每行文字的行高（字号+行距） */
+#define FONT_PIXELS     32                  /* 正文字号（像素） */
+#define LINE_HEIGHT     40                  /* 正文每行的行高（字号+行距） */
 #define MARGIN          20                  /* 屏幕边距 */
 #define BUF_SIZE        4096                /* 收发缓冲区大小 */
 #define MAX_NAME        255                 /* 协议允许的最大文件名长度 */
 #define MAX_ANSWER      4096                /* AI 回答最大长度 */
 #define ACK_TEXT        "OK"                /* 与服务器约定的应答字符串 */
 #define ACK_SIZE        2                   /* "OK" 长度，不含字符串结束符 */
+#define ERR_HOLD_SEC    2                   /* 出错提示在屏幕上停留的秒数，便于看清 */
+
+/* 触摸按钮的编号（ui_run_screen 的返回值） */
+#define ID_START        1                   /* 待机页：开始对话 */
+#define ID_CONTINUE     2                   /* 回答页：继续提问 */
+#define ID_EXIT         0                   /* 退出程序 */
+
+/* 回答页按钮要占的底部区域：正文只允许画到 ANSWER_CLIP_BOTTOM 以上 */
+#define ANSWER_CLIP_BOTTOM  310
 /*===========================  用户配置区结束  ==================================*/
 
 /*--------------------------- 全局 LCD / 字库对象  -----------------------------*/
 static int              g_lcd_fd = -1;      /* LCD 设备文件描述符 */
 static unsigned int    *g_lcd_mp = NULL;    /* LCD 显存映射首地址 */
 static font            *g_font  = NULL;     /* 字库对象 */
+
+/* g_answer_buf：当前这一轮的 AI 回答文本，供回答屏的绘制回调读取 */
+static char             g_answer_buf[MAX_ANSWER];
+
+/*------------------------- 两屏界面共用的按钮布局 -----------------------------*/
+/* 待机页按钮：【开始对话】（蓝） + 【退出】（灰），横向并排、左右各留 50 像素 */
+static UiButton g_idle_btns[] = {
+    /* x    y    w    h   文字       正常色        按下色(更深)  字号  id */
+    {  50, 235, 430, 175, "开始对话", 0xFF1F6FE0, 0xFF0E4A9E, 40, ID_START },
+    { 520, 235, 230, 175, "退出",     0xFF8A8A8A, 0xFF5A5A5A, 40, ID_EXIT  },
+};
+
+/* 回答页按钮：【继续提问】（绿） + 【退出】（灰），固定在屏幕底部 */
+static UiButton g_answer_btns[] = {
+    {  50, 330, 430, 120, "继续提问", 0xFF2FA257, 0xFF1C6E3A, 32, ID_CONTINUE },
+    { 520, 330, 230, 120, "退出",     0xFF8A8A8A, 0xFF5A5A5A, 32, ID_EXIT     },
+};
 
 /*
  * send_all：可靠发送
@@ -120,15 +150,15 @@ static int recv_all(int fd, void *buffer, size_t length)
 
 /*
  * lcd_init：打开 /dev/fb0 并把显存映射到用户空间，同时加载 TTF 字库。
- * 字库加载失败不影响主流程（只是没有画面，终端仍会打印）。
+ * 本版本是纯触摸屏交互，LCD/字库缺一不可，失败直接返回 -1 由主程序退出。
  */
-static void lcd_init(void)
+static int lcd_init(void)
 {
     /* 1.打开 LCD 帧缓冲设备 */
     g_lcd_fd = open(LCD_DEV, O_RDWR);
     if (g_lcd_fd < 0) {
         perror("打开 LCD 设备失败");
-        return;
+        return -1;
     }
     /* 2.把整块 800x480x4 字节的显存映射到进程地址空间，
      *      之后向 g_lcd_mp 写像素就等于直接写屏幕。 */
@@ -139,15 +169,16 @@ static void lcd_init(void)
         g_lcd_mp = NULL;
         close(g_lcd_fd);
         g_lcd_fd = -1;
-        return;
+        return -1;
     }
     /* 3.加载中文 TTF 字库并设置字号 */
     g_font = fontLoad((char *)FONT_PATH);
     if (g_font == NULL) {
-        printf("警告：字库加载失败（%s），将只在终端输出\n", FONT_PATH);
-        return;
+        printf("字库加载失败（%s）\n", FONT_PATH);
+        return -1;
     }
     fontSetSize(g_font, FONT_PIXELS);
+    return 0;
 }
 
 /*
@@ -197,24 +228,24 @@ static int utf8_char_width(unsigned char c)
 }
 
 /*
- * lcd_draw_lines：在白色画布上按自动换行绘制多行 UTF-8 文本，
- *                 画完一次性刷到 LCD。
- * 参数：lines[] 文本行数组（每行内部仍会按屏幕宽度自动折行），
- *       line_num 行数；colors[] 每行颜色（如黑色 0x00000000）。
+ * draw_text_block：在【给定画布】上，从 top_y 开始绘制多行 UTF-8 文本，
+ *                  每行内部按屏幕宽度自动折行，画到 bottom_y 以下就裁剪。
+ * 参数：screen   目标画布（由调用方创建，本函数不负责创建/刷屏/销毁）
+ *       lines[]  文本行数组；colors[] 每行颜色；line_num 行数
+ *       top_y    第一行的顶部 y 坐标；bottom_y 允许绘制的最大 y（不含）
+ * 说明：把“画文字”和“建画布/刷屏”拆开后，既能整屏刷状态文字，
+ *       也能在回答屏上半部分画文字、下半部分留给触摸按钮。
  */
-static void lcd_draw_lines(const char *lines[], const unsigned int colors[], int line_num)
+static void draw_text_block(bitmap *screen, const char *lines[],
+                            const unsigned int colors[], int line_num,
+                            int top_y, int bottom_y)
 {
     int i;
-    if (g_lcd_mp == NULL || g_font == NULL) return;  /* 没有 LCD/字库时直接跳过 */
+    if (screen == NULL || g_font == NULL) return;
 
-    /* 1.创建一张 800x480、32位色、初始化为白色(0xFFFFFFFF)的画布 */
-    bitmap *screen = createBitmapWithInit(LCD_WIDTH, LCD_HEIGHT, 4, 0xFFFFFFFF);
-    if (screen == NULL) {
-        printf("创建画布失败\n");
-        return;
-    }
+    fontSetSize(g_font, FONT_PIXELS);      /* 正文统一使用 FONT_PIXELS 字号 */
 
-    int y = MARGIN;   /* 当前绘制行的 y 坐标 */
+    int y = top_y;
     for (i = 0; i < line_num; i++) {
         const char *p = lines[i];
         int x = MARGIN;
@@ -237,8 +268,8 @@ static void lcd_draw_lines(const char *lines[], const unsigned int colors[], int
                 x = MARGIN;
                 y += LINE_HEIGHT;
             }
-            /* 超出屏幕高度就不再绘制（防止写爆画布） */
-            if (y + LINE_HEIGHT > LCD_HEIGHT) break;
+            /* 越过允许绘制的下边界就停止（给按钮留位置，也防止写爆画布） */
+            if (y + LINE_HEIGHT > bottom_y) break;
 
             /* 把这一个字符画到画布的 (x,y) 位置，最后一个参数是允许的最大宽度 */
             fontPrint(g_font, screen, x, y, one, colors[i], w + 2);
@@ -247,11 +278,28 @@ static void lcd_draw_lines(const char *lines[], const unsigned int colors[], int
         }
         y += LINE_HEIGHT;  /* 一个逻辑行结束，额外换行 */
     }
+}
 
-    /* 2.把整张画布一次性搬到 LCD 显存，画面即更新 */
+/*
+ * lcd_draw_lines：整屏绘制多行文本（白色背景），画完一次性刷到 LCD。
+ * 用于“正在录音/AI 思考中/出错提示”这类没有按钮的临时状态屏。
+ */
+static void lcd_draw_lines(const char *lines[], const unsigned int colors[], int line_num)
+{
+    if (g_lcd_mp == NULL || g_font == NULL) return;
+
+    /* 1.创建一张 800x480、32位色、初始化为白色(0xFFFFFFFF)的画布 */
+    bitmap *screen = createBitmapWithInit(LCD_WIDTH, LCD_HEIGHT, 4, 0xFFFFFFFF);
+    if (screen == NULL) {
+        printf("创建画布失败\n");
+        return;
+    }
+
+    /* 2.把文字画满整屏区域 */
+    draw_text_block(screen, lines, colors, line_num, MARGIN, LCD_HEIGHT);
+
+    /* 3.整张画布一次性搬到 LCD 显存，画面即更新，随后销毁画布 */
     show_font_to_lcd(g_lcd_mp, 0, 0, screen);
-
-    /* 3.画布用完即销毁，避免内存泄漏 */
     destroyBitmap(screen);
 }
 
@@ -265,19 +313,53 @@ static void lcd_show_status(const char *line1, const char *line2)
     lcd_draw_lines(lines, colors, line2 ? 2 : 1);
 }
 
-/* 显示 AI 回答：第一行是标题，第二行开始是自动换行的回答正文 */
-static void lcd_show_answer(const char *answer)
+/*
+ * paint_idle：待机页绘制回调（由 ui_run_screen 调用）
+ *      上半部分画标题和操作提示，下半部分画两个触摸按钮。
+ *      pressed_idx 表示当前被按下的按钮下标（-1=无），用于按钮高亮。
+ */
+static void paint_idle(bitmap *screen, int pressed_idx, void *userdata)
 {
-    /* 回答本身可能很长，内部会自动折行，这里整体作为一个逻辑行传入 */
-    const char *title = "AI 回答：";
-    char body[MAX_ANSWER];
-    snprintf(body, sizeof(body), "%s", answer ? answer : "（空）");
+    int n = (int)(sizeof(g_idle_btns) / sizeof(g_idle_btns[0]));
+    int i;
 
+    (void)userdata;   /* 本屏不需要额外业务数据 */
+
+    /* 标题与副标题（水平居中） */
+    ui_draw_centered_text(screen, "AI 语音助手",
+                          LCD_WIDTH / 2, 55, 44, 0xFF000000);
+    ui_draw_centered_text(screen, "点击下方按钮，开始语音对话",
+                          LCD_WIDTH / 2, 150, 26, 0xFF555555);
+
+    /* 逐个画按钮，被按下的那个按钮内部会自动换成深色 */
+    for (i = 0; i < n; i++) {
+        ui_paint_button(screen, &g_idle_btns[i], pressed_idx == i);
+    }
+}
+
+/*
+ * paint_answer：回答页绘制回调
+ *      上半部分（ANSWER_CLIP_BOTTOM 以上）显示“AI 回答：”+自动换行的正文，
+ *      下半部分固定画【继续提问】【退出】两个按钮。
+ */
+static void paint_answer(bitmap *screen, int pressed_idx, void *userdata)
+{
     const char *lines[2];
     unsigned int colors[2] = {0xFF0000AA, 0xFF000000};  /* 标题深蓝，正文黑色 */
-    lines[0] = title;
-    lines[1] = body;
-    lcd_draw_lines(lines, colors, 2);
+    int n = (int)(sizeof(g_answer_btns) / sizeof(g_answer_btns[0]));
+    int i;
+
+    (void)userdata;
+
+    /* 1.正文区域：只允许画到 ANSWER_CLIP_BOTTOM，给底部按钮留出空间 */
+    lines[0] = "AI 回答：";
+    lines[1] = g_answer_buf;
+    draw_text_block(screen, lines, colors, 2, MARGIN, ANSWER_CLIP_BOTTOM);
+
+    /* 2.底部按钮 */
+    for (i = 0; i < n; i++) {
+        ui_paint_button(screen, &g_answer_btns[i], pressed_idx == i);
+    }
 }
 
 /*
@@ -441,55 +523,74 @@ static int recv_answer(int sock_fd, char *answer, size_t max_len)
 
 int main(void)
 {
-    int input = 0;
+    /* 1.初始化 LCD 与字库（纯触摸交互，LCD 不可用则直接退出） */
+    if (lcd_init() < 0) {
+        printf("LCD/字库初始化失败，无法显示触摸界面，程序退出\n");
+        return -1;
+    }
 
-    /* 初始化 LCD 与字库（失败不影响终端流程） */
-    lcd_init();
-    lcd_show_status("AI 语音助手已就绪", "键盘输入 1 开始录音，输入 0 退出");
+    /* 2.初始化触摸屏（gslX680 -> /dev/input/event0），失败直接退出 */
+    if (touch_ui_init(g_lcd_mp, g_font, LCD_WIDTH, LCD_HEIGHT) < 0) {
+        lcd_show_status("触摸屏初始化失败", "请检查 /dev/input/event0");
+        sleep(ERR_HOLD_SEC);
+        lcd_release();
+        return -1;
+    }
+
     printf("==============================================\n");
-    printf(" AI 语音助手板端已启动\n");
-    printf(" 输入 1 开始录音对话，输入 0 退出\n");
+    printf(" AI 语音助手板端已启动（触摸屏交互）\n");
+    printf(" 点击屏幕【开始对话】录音，点【退出】结束程序\n");
     printf("==============================================\n");
 
+    /* 3.主循环：待机页 -> 录音上传收回答 -> 回答页 -> 回到待机页 */
     while (1) {
-        printf("\n请输入指令：");
-        if (scanf("%d", &input) != 1) {      /* 输入非数字时清空输入缓冲区，防止死循环 */
-            int ch; while ((ch = getchar()) != '\n' && ch != EOF) {}
-            printf("请输入数字 1 或 0\n");
-            continue;
-        }
-        if (input == 0) break;               /* 退出主循环 */
-        if (input != 1) {
-            printf("无效指令，请输入 1 或 0\n");
+        /* 3.1 显示待机页并阻塞等待触摸，返回被点按钮的 id */
+        int choice = ui_run_screen(paint_idle, NULL,
+                                   g_idle_btns,
+                                   (int)(sizeof(g_idle_btns) / sizeof(g_idle_btns[0])));
+        if (choice == ID_EXIT) break;          /* 点了退出 */
+        if (choice != ID_START) continue;      /* 异常返回值，重新等 */
+
+        /* 3.2 第一步：板端 ALSA 录音 3 秒（内部会刷“正在录音”状态屏） */
+        if (record_audio() < 0) {
+            sleep(ERR_HOLD_SEC);               /* 让出错提示停留片刻再回待机页 */
             continue;
         }
 
-        /* 第一步：板端 ALSA 录音 3 秒 */
-        if (record_audio() < 0) continue;
-
-        /* 第二步：连接服务器并上传录音 */
+        /* 3.3 第二步：连接服务器并上传录音 */
         lcd_show_status("正在连接服务器...", NULL);
         int sock_fd = upload_wav(WAV_FILE);
         if (sock_fd < 0) {
             lcd_show_status("连接/上传失败", "请检查网络与服务器是否启动");
+            sleep(ERR_HOLD_SEC);
             continue;
         }
 
-        /* 第三步：等待服务器（讯飞听写 + 智谱AI）处理结果 */
+        /* 3.4 第三步：等待服务器（讯飞听写 + 智谱AI）处理结果 */
         lcd_show_status("AI 正在思考...", "语音识别 + 大模型回答中");
         char answer[MAX_ANSWER] = {0};
         if (recv_answer(sock_fd, answer, sizeof(answer)) < 0) {
             lcd_show_status("接收 AI 回答失败", NULL);
             close(sock_fd);
+            sleep(ERR_HOLD_SEC);
             continue;
         }
         close(sock_fd);
 
-        /* 第四步：终端 + LCD 同步显示 AI 回答 */
+        /* 3.5 终端同步打印一份 AI 回答（方便在串口看日志），屏幕走回答页 */
         printf("\n========== AI 回答 ==========\n%s\n=============================\n", answer);
-        lcd_show_answer(answer);
+        snprintf(g_answer_buf, sizeof(g_answer_buf), "%s", answer);
+
+        /* 3.6 显示回答页并等待：继续提问（回待机页）或退出 */
+        int ans_choice = ui_run_screen(paint_answer, NULL,
+                                       g_answer_btns,
+                                       (int)(sizeof(g_answer_btns) / sizeof(g_answer_btns[0])));
+        if (ans_choice == ID_EXIT) break;
+        /* 点【继续提问】或其他情况：循环回到待机页，开始下一轮 */
     }
 
+    /* 4.收尾：关闭触摸、释放 LCD */
+    touch_ui_exit();
     lcd_show_status("程序已退出", NULL);
     lcd_release();
     printf("再见！\n");
