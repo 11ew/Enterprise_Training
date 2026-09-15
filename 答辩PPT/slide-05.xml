@@ -1,0 +1,185 @@
+<slide xmlns="https://www.larkoffice.com/sml/2.0">
+  <style>
+    <fill>
+      <fillColor color="rgb(255, 255, 255)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="34" width="400" height="20">
+      <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" letterSpacing="2" wrap="false">
+        <p>04  系统测试</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="56" width="840" height="36">
+      <content textType="title" fontSize="24" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>六类用例全部通过，四个典型问题均定位根因并修复</p>
+      </content>
+    </shape>
+    <line startX="60" startY="100" endX="900" endY="100">
+      <border color="rgb(212, 229, 247)" width="1"/>
+    </line>
+
+    <shape type="text" topLeftX="60" topLeftY="108" width="410" height="16">
+      <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" wrap="false">
+        <p>测试环境：GEC6818（ARM Linux）与 WSL Ubuntu 直连同网段，云端走外网</p>
+      </content>
+    </shape>
+    <table topLeftX="60" topLeftY="128" width="410" height="296">
+      <colgroup>
+        <col width="200"/>
+        <col width="130"/>
+        <col width="80"/>
+      </colgroup>
+      <tr height="32">
+        <td>
+          <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+          <content textType="body" fontSize="10.5" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>测试用例</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+          <content textType="body" fontSize="10.5" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>预期结果</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+          <content textType="body" fontSize="10.5" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>结论</p></content>
+        </td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left" verticalAlign="middle"><p>点按开始，录音并上传</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="center" verticalAlign="middle"><p>状态屏依次切换</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(0, 112, 186, 1)" textAlign="center" verticalAlign="middle"><p>通过</p></content></td>
+      </tr>
+      <tr height="44">
+        <td>
+          <fill><fillColor color="rgb(242, 246, 252)"/></fill>
+          <content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left" verticalAlign="middle"><p>识别与 GLM 回答回传</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(242, 246, 252)"/></fill>
+          <content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="center" verticalAlign="middle"><p>LCD 自动换行</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(242, 246, 252)"/></fill>
+          <content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(0, 112, 186, 1)" textAlign="center" verticalAlign="middle"><p>通过</p></content>
+        </td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left" verticalAlign="middle"><p>连续多轮对话</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="center" verticalAlign="middle"><p>连接正常重建</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(0, 112, 186, 1)" textAlign="center" verticalAlign="middle"><p>通过</p></content></td>
+      </tr>
+      <tr height="44">
+        <td>
+          <fill><fillColor color="rgb(242, 246, 252)"/></fill>
+          <content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left" verticalAlign="middle"><p>服务器未启动 / 断网</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(242, 246, 252)"/></fill>
+          <content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="center" verticalAlign="middle"><p>提示失败不卡死</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(242, 246, 252)"/></fill>
+          <content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(0, 112, 186, 1)" textAlign="center" verticalAlign="middle"><p>通过</p></content>
+        </td>
+      </tr>
+      <tr height="44">
+        <td><content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left" verticalAlign="middle"><p>识别为空 / AI 异常</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="center" verticalAlign="middle"><p>兜底语回复</p></content></td>
+        <td><content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(0, 112, 186, 1)" textAlign="center" verticalAlign="middle"><p>通过</p></content></td>
+      </tr>
+      <tr height="44">
+        <td>
+          <fill><fillColor color="rgb(242, 246, 252)"/></fill>
+          <content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left" verticalAlign="middle"><p>按在按钮外或滑出</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(242, 246, 252)"/></fill>
+          <content textType="body" fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="center" verticalAlign="middle"><p>不误触发</p></content>
+        </td>
+        <td>
+          <fill><fillColor color="rgb(242, 246, 252)"/></fill>
+          <content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(0, 112, 186, 1)" textAlign="center" verticalAlign="middle"><p>通过</p></content>
+        </td>
+      </tr>
+    </table>
+    <shape type="text" topLeftX="60" topLeftY="436" width="410" height="30">
+      <content textType="body" fontSize="10.5" fontFamily="思源黑体" bold="true" color="rgba(0, 48, 135, 1)" wrap="false">
+        <p>连续 20 轮以上回归，未出现丢包、花屏或崩溃</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="500" topLeftY="108" width="400" height="16">
+      <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" wrap="false">
+        <p>调试中的四个典型问题与解决办法</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="500" topLeftY="130" width="400" height="22">
+      <content textType="body" fontSize="12" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>1  TCP 粘包 / 半包导致文件截断</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="154" width="400" height="36">
+      <content textType="body" fontSize="10.5" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>定长头声明字节数，send_all/recv_all 循环收发严格收齐，两次 OK 握手确认</p>
+      </content>
+    </shape>
+    <line startX="500" startY="208" endX="900" endY="208">
+      <border color="rgb(226, 232, 240)" width="1"/>
+    </line>
+
+    <shape type="text" topLeftX="500" topLeftY="218" width="400" height="22">
+      <content textType="body" fontSize="12" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>2  触摸原始坐标与屏幕像素不一致</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="242" width="400" height="36">
+      <content textType="body" fontSize="10.5" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>EVIOCGABS 读取轴范围线性映射到 800×480，预留 X/Y 交换与镜像宏一次标定</p>
+      </content>
+    </shape>
+    <line startX="500" startY="296" endX="900" endY="296">
+      <border color="rgb(226, 232, 240)" width="1"/>
+    </line>
+
+    <shape type="text" topLeftX="500" topLeftY="306" width="400" height="22">
+      <content textType="body" fontSize="12" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>3  字库头文件宏冲突导致交叉编译失败</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="330" width="400" height="36">
+      <content textType="body" fontSize="10.5" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>font.h 中 #define color u32 会替换参数名，颜色入参统一改名 clr 后编译通过</p>
+      </content>
+    </shape>
+    <line startX="500" startY="384" endX="900" endY="384">
+      <border color="rgb(226, 232, 240)" width="1"/>
+    </line>
+
+    <shape type="text" topLeftX="500" topLeftY="394" width="400" height="22">
+      <content textType="body" fontSize="12" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>4  WSL 与开发板直连互通及动态库路径</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="500" topLeftY="418" width="400" height="36">
+      <content textType="body" fontSize="10.5" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>两端固定同网段 link-local 地址；libmsc.so 经 rpath 写入可执行文件，免 export 库路径</p>
+      </content>
+    </shape>
+    <line startX="500" startY="472" endX="900" endY="472">
+      <border color="rgb(226, 232, 240)" width="1"/>
+    </line>
+
+    <shape type="text" topLeftX="840" topLeftY="506" width="60" height="18">
+      <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" textAlign="right" wrap="false">
+        <p>05 / 06</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>测试方面，环境是 GEC6818 和 WSL 服务器网线直连同网段，讯飞和智谱走外网。我们设计了六类用例：正常录音上传、回答回显、连续多轮、网络异常、识别为空或 AI 异常、以及触摸误触，全部通过，并做了二十轮以上回归。</p>
+      <p>右侧是调试中最有代表性的四个问题：第一是 TCP 粘包半包，用定长头加循环收发和双 OK 解决；第二是触摸坐标和像素对不上，用 EVIOCGABS 自动映射，加标定宏兜底；第三是字库头文件里的宏把颜色参数名替换导致编译失败，改名规避；第四是 WSL 直连网络和动态库搜索路径，用固定同网段地址和 rpath 解决。</p>
+    </content>
+  </note>
+</slide>

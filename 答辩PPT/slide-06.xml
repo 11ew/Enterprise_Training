@@ -1,0 +1,151 @@
+<slide xmlns="https://www.larkoffice.com/sml/2.0">
+  <style>
+    <fill>
+      <fillColor color="rgb(255, 255, 255)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="34" width="400" height="20">
+      <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" letterSpacing="2" wrap="false">
+        <p>05  总结与展望</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="56" width="840" height="36">
+      <content textType="title" fontSize="24" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>端云协同语音问答闭环已跑通，三个方向可持续迭代</p>
+      </content>
+    </shape>
+    <line startX="60" startY="100" endX="900" endY="100">
+      <border color="rgb(212, 229, 247)" width="1"/>
+    </line>
+
+    <shape type="text" topLeftX="60" topLeftY="116" width="400" height="22">
+      <content textType="body" fontSize="14" fontFamily="思源黑体" bold="true" color="rgba(0, 48, 135, 1)" wrap="false">
+        <p>项目成果与收获</p>
+      </content>
+    </shape>
+    <line startX="60" startY="142" endX="460" endY="142">
+      <border color="rgb(0, 48, 135)" width="2"/>
+    </line>
+
+    <shape type="rect" topLeftX="60" topLeftY="158" width="22" height="22">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>1</p></content>
+    </shape>
+    <shape type="text" topLeftX="92" topLeftY="156" width="368" height="22">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>打通端云协同完整闭环</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="92" topLeftY="180" width="368" height="44">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>点屏即说、开口即答，触摸、录音、上传、识别、生成与屏幕回显全链路贯通，全程无需键盘</p>
+      </content>
+    </shape>
+
+    <shape type="rect" topLeftX="60" topLeftY="252" width="22" height="22">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>2</p></content>
+    </shape>
+    <shape type="text" topLeftX="92" topLeftY="250" width="368" height="22">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>沉淀嵌入式工程能力</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="92" topLeftY="274" width="368" height="44">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>实践 ARM 交叉编译、framebuffer 显示、evdev 输入、ALSA 录音与 TCP 自定义协议可靠收发</p>
+      </content>
+    </shape>
+
+    <shape type="rect" topLeftX="60" topLeftY="346" width="22" height="22">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>3</p></content>
+    </shape>
+    <shape type="text" topLeftX="92" topLeftY="344" width="368" height="22">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>系统稳定、异常可控</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="92" topLeftY="368" width="368" height="44">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>云端 ASR 与大模型级联、popen 进程编排；断网、识别为空、服务异常均有提示或兜底回复</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="500" topLeftY="116" width="400" height="22">
+      <content textType="body" fontSize="14" fontFamily="思源黑体" bold="true" color="rgba(0, 48, 135, 1)" wrap="false">
+        <p>不足与改进方向</p>
+      </content>
+    </shape>
+    <line startX="500" startY="142" endX="900" endY="142">
+      <border color="rgb(0, 48, 135)" width="2"/>
+    </line>
+
+    <shape type="rect" topLeftX="500" topLeftY="158" width="22" height="22">
+      <fill><fillColor color="rgb(0, 112, 186)"/></fill>
+      <content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>1</p></content>
+    </shape>
+    <shape type="text" topLeftX="532" topLeftY="156" width="368" height="22">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>录音方式更自然</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="532" topLeftY="180" width="368" height="44">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>由固定录音 3 秒，升级为按住说话、松手结束，并引入 VAD 静音检测自动断句</p>
+      </content>
+    </shape>
+
+    <shape type="rect" topLeftX="500" topLeftY="252" width="22" height="22">
+      <fill><fillColor color="rgb(0, 112, 186)"/></fill>
+      <content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>2</p></content>
+    </shape>
+    <shape type="text" topLeftX="532" topLeftY="250" width="368" height="22">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>支持多轮上下文</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="532" topLeftY="274" width="368" height="44">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>当前为单轮问答，后续在服务器维护会话历史，让大模型结合上下文连续作答</p>
+      </content>
+    </shape>
+
+    <shape type="rect" topLeftX="500" topLeftY="346" width="22" height="22">
+      <fill><fillColor color="rgb(0, 112, 186)"/></fill>
+      <content textType="body" fontSize="10" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>3</p></content>
+    </shape>
+    <shape type="text" topLeftX="532" topLeftY="344" width="368" height="22">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>弱网与离线可用</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="532" topLeftY="368" width="368" height="44">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+        <p>现依赖外网访问云端服务，后续加入本地唤醒词与轻量化识别，弱网环境下也能基础可用</p>
+      </content>
+    </shape>
+
+    <line startX="60" startY="446" endX="900" endY="446">
+      <border color="rgb(212, 229, 247)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="60" topLeftY="458" width="840" height="30">
+      <content textType="body" fontSize="15" fontFamily="思源黑体" bold="true" color="rgba(0, 48, 135, 1)" textAlign="center" wrap="false">
+        <p>汇报完毕，恳请各位老师批评指正</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="840" topLeftY="506" width="60" height="18">
+      <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" textAlign="right" wrap="false">
+        <p>06 / 06</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>最后是总结。成果方面，我们完整打通了从触摸采集、可靠上传，到云端识别、大模型生成，再到屏幕回显的闭环，实现了零键盘操作；同时全组实践了交叉编译、framebuffer、evdev、ALSA 和 TCP 自定义协议等一整套嵌入式开发技能；系统对断网、识别为空等异常都做了兜底，可以连续稳定运行。</p>
+      <p>展望有三点：把固定三秒录音升级为按住说话加静音自动断句；从单轮问答扩展到带上下文的多轮对话；以及引入本地唤醒和轻量识别，降低对外网的依赖。</p>
+      <p>我的汇报到此结束，恳请各位老师批评指正，谢谢。</p>
+    </content>
+  </note>
+</slide>

@@ -1,0 +1,1144 @@
+<presentation id="CLEJsIDEMlRSWxdrDROcCD6OnBc" xmlns="https://www.larkoffice.com/sml/2.0" width="960" height="540">
+  <title>基于GEC6818与大模型的AI语音助手-项目答辩</title>
+  <theme>
+    <textStyles>
+      <headline fontColor="rgba(31, 35, 41, 1)"/>
+      <sub-headline fontColor="rgba(31, 35, 41, 1)"/>
+      <body fontColor="rgba(31, 35, 41, 1)"/>
+      <caption fontColor="rgba(155, 158, 162, 1)" fontSize="14"/>
+    </textStyles>
+  </theme>
+  <slide id="pAA">
+    <style>
+      <fill id="fAA">
+        <fillColor color="rgba(0, 48, 135, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="700" height="26" topLeftX="80" topLeftY="92" type="text" id="bzA">
+        <content textType="caption" fontSize="13" fontFamily="思源黑体" color="rgba(212, 229, 247, 1)" letterSpacing="2" wrap="false">
+          <p>企业实训项目答辩 · 嵌入式 AI 语音交互</p>
+        </content>
+      </shape>
+      <shape width="820" height="140" topLeftX="80" topLeftY="138" type="text" id="bzp">
+        <content textType="title" fontSize="44" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true" lineSpacing="multiple:1.25">
+          <p>基于 GEC6818 与大模型的</p>
+          <p>AI 语音助手系统</p>
+        </content>
+      </shape>
+      <line id="bzC" startX="80" startY="300" endX="200.00416659433122" endY="300">
+        <border color="rgba(127, 178, 229, 1)" width="3"/>
+      </line>
+      <shape width="820" height="30" topLeftX="80" topLeftY="316" type="text" id="bzz">
+        <content fontSize="16" fontFamily="思源黑体" color="rgba(212, 229, 247, 1)">
+          <p>触摸屏点按提问，板端录音上传，云端讯飞听写与智谱 GLM 作答，结果回显 800×480 LCD</p>
+        </content>
+      </shape>
+      <shape width="820" height="76" topLeftX="80" topLeftY="398" type="text" id="bzq">
+        <content fontSize="15" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)">
+          <p>小组成员：李强（组长）、钟劲翔、甘智星、杨毅、高原、冯志松</p>
+          <p>技术栈：C/Python · TCP Socket · ALSA · Framebuffer · evdev · 讯飞 IAT · GLM-4-Flash</p>
+        </content>
+      </shape>
+      <shape width="180" height="24" topLeftX="700" topLeftY="496" type="text" id="bzD">
+        <content textType="caption" fontSize="13" fontFamily="思源黑体" color="rgba(212, 229, 247, 1)" textAlign="right" wrap="false">
+          <p>2026 年 9 月</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bzd">
+      <content>
+        <p>各位老师好，我们小组答辩的题目是基于 GEC6818 与大模型的 AI 语音助手系统。</p>
+        <p>用户在开发板触摸屏上点一下按钮、说一句话，录音会通过 TCP 上传到电脑服务器；服务器先用讯飞语音听写把语音转成文字，再调用智谱 GLM 大模型生成回答，最后把回答回传到开发板的 LCD 屏幕上显示。</p>
+        <p>我们小组共六人，由李强担任组长。下面我从系统架构、关键技术、人员分工、测试验证和总结展望五个方面汇报。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pAW">
+    <style>
+      <fill id="fAW">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="400" height="20" topLeftX="60" topLeftY="34" type="text" id="bzJ">
+        <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" letterSpacing="2" wrap="false">
+          <p>01 项目概述与总体架构</p>
+        </content>
+      </shape>
+      <shape width="840" height="36" topLeftX="60" topLeftY="56" type="text" id="bzE">
+        <content textType="title" fontSize="24" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>端云分工：板端负责触摸、录音与显示，云端负责识别与生成</p>
+        </content>
+      </shape>
+      <line id="bzk" startX="60" startY="100" endX="900.0005952378843" endY="100">
+        <border color="rgba(212, 229, 247, 1)" width="1"/>
+      </line>
+      <shape width="840" height="70" topLeftX="60" topLeftY="110" type="text" id="bzR">
+        <content fontSize="13" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.6">
+          <p><strong><span color="rgba(0, 48, 135, 1)">背景：</span></strong>传统开发板演示依赖串口敲命令，需接键盘、步骤繁琐，现场交互不直观。</p>
+          <p><strong><span color="rgba(0, 48, 135, 1)">目标：</span></strong>实现“点屏即说、开口即答”、全程零键盘的嵌入式语音问答终端，支持连续多轮对话。</p>
+          <p><strong><span color="rgba(0, 48, 135, 1)">约束：</span></strong>板端算力有限，语音识别与大模型推理部署在电脑服务器，板端只做采集、交互与回显。</p>
+        </content>
+      </shape>
+      <shape width="404" height="304" topLeftX="48" topLeftY="188" presetHandlers="0" type="rect" id="bza">
+        <fill>
+          <fillColor color="rgba(212, 229, 247, 0.55)"/>
+        </fill>
+        <content verticalAlign="top" fontSize="13" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true" textAlign="left">
+          <p>板端 · GEC6818（ARM Linux，800×480 触摸 LCD）</p>
+        </content>
+      </shape>
+      <shape width="380" height="48" topLeftX="60" topLeftY="226" presetHandlers="0" type="rect" id="bzu">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)">
+          <p>触摸交互界面 gslX680 电容屏 / evdev 按钮事件</p>
+        </content>
+      </shape>
+      <line id="bzg" startX="250" startY="276" endX="250" endY="282.0827625302982">
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="380" height="48" topLeftX="60" topLeftY="284" presetHandlers="0" type="rect" id="bzL">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)">
+          <p>语音采集 arecord：16 kHz / 单声道 / S16_LE</p>
+        </content>
+      </shape>
+      <line id="bzc" startX="250.00000000000006" startY="334" endX="250.00000000000006" endY="340.0827625302982">
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="380" height="48" topLeftX="60" topLeftY="342" presetHandlers="0" type="rect" id="bzS">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)">
+          <p>TCP 客户端 socket 连接并上传 cmd.wav</p>
+        </content>
+      </shape>
+      <line id="bzN" startX="249.99999999999994" startY="392" endX="249.99999999999994" endY="398.0827625302982">
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="380" height="48" topLeftX="60" topLeftY="400" presetHandlers="0" type="rect" id="bzj">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)">
+          <p>结果显示 /dev/fb0 + libfont 汉字自动换行</p>
+        </content>
+      </shape>
+      <shape width="404" height="304" topLeftX="508" topLeftY="188" presetHandlers="0" type="rect" id="bzY">
+        <fill>
+          <fillColor color="rgba(212, 229, 247, 0.55)"/>
+        </fill>
+        <content verticalAlign="top" fontSize="13" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true" textAlign="left">
+          <p>服务器 · WSL Ubuntu（x86_64，常驻服务）</p>
+        </content>
+      </shape>
+      <shape width="380" height="48" topLeftX="520" topLeftY="226" presetHandlers="0" type="rect" id="bzO">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)">
+          <p>TCP 服务器 监听 8888、按协议接收并落盘</p>
+        </content>
+      </shape>
+      <line id="bzt" startX="710" startY="276" endX="710" endY="282.0827625302982">
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="380" height="48" topLeftX="520" topLeftY="284" presetHandlers="0" type="rect" id="bzs">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)">
+          <p>讯飞 IAT 在线听写 libmsc.so 语音转文字</p>
+        </content>
+      </shape>
+      <line id="bzl" startX="710" startY="334" endX="710" endY="340.0827625302982">
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="380" height="48" topLeftX="520" topLeftY="342" presetHandlers="0" type="rect" id="bzr">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)">
+          <p>智谱 GLM-4-Flash zhipu_ai.py 生成回答</p>
+        </content>
+      </shape>
+      <line id="bzm" startX="710" startY="392" endX="710" endY="398.0827625302982">
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="380" height="48" topLeftX="520" topLeftY="400" presetHandlers="0" type="rect" id="bzB">
+        <fill>
+          <fillColor color="rgba(255, 255, 255, 1)"/>
+        </fill>
+        <border color="rgba(0, 112, 186, 1)" width="1"/>
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)">
+          <p>回答回传 4 字节长度 + UTF-8 文本</p>
+        </content>
+      </shape>
+      <line id="bzI" startX="454" startY="312" endX="506.00961449578335" endY="312">
+        <border color="rgba(0, 48, 135, 1)"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="52" height="16" topLeftX="454" topLeftY="288" type="text" id="bzZ">
+        <content textType="caption" fontSize="9" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" textAlign="center" wrap="false">
+          <p>WAV 上传</p>
+        </content>
+      </shape>
+      <line id="bzP" startX="506" startY="367.99999999999994" endX="453.99038550421665" endY="367.99999999999994">
+        <border color="rgba(0, 48, 135, 1)"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="52" height="16" topLeftX="454" topLeftY="372" type="text" id="bzM">
+        <content textType="caption" fontSize="9" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" textAlign="center" wrap="false">
+          <p>回答回传</p>
+        </content>
+      </shape>
+      <shape width="200" height="18" topLeftX="60" topLeftY="506" type="text" id="bzT">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" wrap="false">
+          <p>同一条 TCP 连接完成全流程</p>
+        </content>
+      </shape>
+      <shape width="60" height="18" topLeftX="840" topLeftY="506" type="text" id="bzX">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" textAlign="right" wrap="false">
+          <p>02 / 06</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bzh">
+      <content>
+        <p>这一页是系统总体架构。我们采用端云分工：开发板算力有限，所以把重计算放在服务器，板端只做四件事——触摸交互、录音、网络上传和屏幕显示。</p>
+        <p>左侧是板端 GEC6818：gslX680 电容屏采集触摸事件，arecord 按讯飞要求录成 16k 单声道 16 位的 WAV，通过 TCP 上传，最后把回答渲染到 framebuffer 屏幕。</p>
+        <p>右侧是 WSL 服务器：8888 端口常驻监听，收到音频后用 popen 依次调用讯飞在线听写和智谱 GLM-4-Flash，再把回答沿同一条连接回传。中间两条箭头分别表示上传 WAV 和回传回答。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pAJ">
+    <style>
+      <fill id="fAJ">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="400" height="20" topLeftX="60" topLeftY="34" type="text" id="bdW">
+        <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" letterSpacing="2" wrap="false">
+          <p>02 工作流程与关键技术</p>
+        </content>
+      </shape>
+      <shape width="840" height="36" topLeftX="60" topLeftY="56" type="text" id="bdb">
+        <content textType="title" fontSize="24" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>一条 TCP 连接串起七步协议，五个技术点保证链路可靠</p>
+        </content>
+      </shape>
+      <line id="bdw" startX="60" startY="100" endX="900.0005952378843" endY="100">
+        <border color="rgba(212, 229, 247, 1)" width="1"/>
+      </line>
+      <shape width="840" height="16" topLeftX="60" topLeftY="108" type="text" id="bdE">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" wrap="false">
+          <p>一次对话的七步协议时序（深蓝为板端动作，中蓝为服务器动作）</p>
+        </content>
+      </shape>
+      <shape width="104" height="52" topLeftX="60" topLeftY="128" presetHandlers="0" type="rect" id="bdM">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.3">
+          <p>1 发文件头</p>
+          <p>长度+大小+名</p>
+        </content>
+      </shape>
+      <line id="bdx" startX="166" startY="154" endX="176.0498756211209" endY="154">
+        <border color="rgba(0, 48, 135, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="104" height="52" topLeftX="178" topLeftY="128" presetHandlers="0" type="rect" id="bdG">
+        <fill>
+          <fillColor color="rgba(0, 112, 186, 1)"/>
+        </fill>
+        <content fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.3">
+          <p>2 回复 OK</p>
+          <p>确认文件信息</p>
+        </content>
+      </shape>
+      <line id="bqd" startX="284" startY="154" endX="294.0498756211209" endY="154">
+        <border color="rgba(0, 48, 135, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="104" height="52" topLeftX="296" topLeftY="128" presetHandlers="0" type="rect" id="bdZ">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.3">
+          <p>3 上传 WAV</p>
+          <p>按字节发完</p>
+        </content>
+      </shape>
+      <line id="bdl" startX="402" startY="154" endX="412.0498756211209" endY="154">
+        <border color="rgba(0, 48, 135, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="104" height="52" topLeftX="414" topLeftY="128" presetHandlers="0" type="rect" id="bdy">
+        <fill>
+          <fillColor color="rgba(0, 112, 186, 1)"/>
+        </fill>
+        <content fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.3">
+          <p>4 回复 OK</p>
+          <p>确认完整落盘</p>
+        </content>
+      </shape>
+      <line id="bdK" startX="520" startY="154" endX="530.0498756211209" endY="154">
+        <border color="rgba(0, 48, 135, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="104" height="52" topLeftX="532" topLeftY="128" presetHandlers="0" type="rect" id="bqz">
+        <fill>
+          <fillColor color="rgba(0, 112, 186, 1)"/>
+        </fill>
+        <content fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.3">
+          <p>5 讯飞听写</p>
+          <p>语音转文字</p>
+        </content>
+      </shape>
+      <line id="bdt" startX="638" startY="154" endX="648.0498756211209" endY="154">
+        <border color="rgba(0, 48, 135, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="104" height="52" topLeftX="650" topLeftY="128" presetHandlers="0" type="rect" id="bda">
+        <fill>
+          <fillColor color="rgba(0, 112, 186, 1)"/>
+        </fill>
+        <content fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.3">
+          <p>6 GLM 生成</p>
+          <p>大模型作答</p>
+        </content>
+      </shape>
+      <line id="bdU" startX="756" startY="154" endX="766.0498756211209" endY="154">
+        <border color="rgba(0, 48, 135, 1)" width="1"/>
+        <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+      </line>
+      <shape width="104" height="52" topLeftX="768" topLeftY="128" presetHandlers="0" type="rect" id="bdV">
+        <fill>
+          <fillColor color="rgba(0, 112, 186, 1)"/>
+        </fill>
+        <content fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.3">
+          <p>7 回传回答</p>
+          <p>长度加 UTF-8</p>
+        </content>
+      </shape>
+      <shape width="400" height="16" topLeftX="60" topLeftY="192" type="text" id="bqA">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" wrap="false">
+          <p>五个关键技术点</p>
+        </content>
+      </shape>
+      <shape width="24" height="24" topLeftX="60" topLeftY="216" presetHandlers="0" type="rect" id="bdS">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>1</p>
+        </content>
+      </shape>
+      <shape width="140" height="28" topLeftX="96" topLeftY="214" type="text" id="bdT">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>电容触摸交互</p>
+        </content>
+      </shape>
+      <shape width="654" height="28" topLeftX="246" topLeftY="214" type="text" id="bdi">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)">
+          <p>evdev 读取 /dev/input/event0，EVIOCGABS 自动获取坐标范围并线性映射到 800×480；按下高亮、抬手触发，滑出按钮不误触</p>
+        </content>
+      </shape>
+      <line id="bdQ" startX="60" startY="258" endX="900.0005952378843" endY="258">
+        <border color="rgba(226, 232, 240, 1)" width="1"/>
+      </line>
+      <shape width="24" height="24" topLeftX="60" topLeftY="272" presetHandlers="0" type="rect" id="bqq">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>2</p>
+        </content>
+      </shape>
+      <shape width="140" height="28" topLeftX="96" topLeftY="270" type="text" id="bdk">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>录音与屏幕显示</p>
+        </content>
+      </shape>
+      <shape width="654" height="28" topLeftX="246" topLeftY="270" type="text" id="bdP">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)">
+          <p>arecord 固定 16 kHz / 单声道 / S16_LE 满足识别格式；mmap 映射 /dev/fb0，libfont 渲染 TTF 汉字，按 UTF-8 逐字符自动折行</p>
+        </content>
+      </shape>
+      <line id="bdX" startX="60" startY="314" endX="900.0005952378843" endY="314">
+        <border color="rgba(226, 232, 240, 1)" width="1"/>
+      </line>
+      <shape width="24" height="24" topLeftX="60" topLeftY="328" presetHandlers="0" type="rect" id="bdn">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>3</p>
+        </content>
+      </shape>
+      <shape width="140" height="28" topLeftX="96" topLeftY="326" type="text" id="bde">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>自定义可靠传输</p>
+        </content>
+      </shape>
+      <shape width="654" height="28" topLeftX="246" topLeftY="326" type="text" id="bdI">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)">
+          <p>应用层协议定长头加变长体，htonl 统一网络字节序，send_all/recv_all 循环收发解决粘包半包，两次 OK 确认保证文件完整</p>
+        </content>
+      </shape>
+      <line id="bdr" startX="60" startY="370" endX="900.0005952378843" endY="370">
+        <border color="rgba(226, 232, 240, 1)" width="1"/>
+      </line>
+      <shape width="24" height="24" topLeftX="60" topLeftY="384" presetHandlers="0" type="rect" id="bdH">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>4</p>
+        </content>
+      </shape>
+      <shape width="140" height="28" topLeftX="96" topLeftY="382" type="text" id="bdv">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>讯飞在线听写</p>
+        </content>
+      </shape>
+      <shape width="654" height="28" topLeftX="246" topLeftY="382" type="text" id="bds">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)">
+          <p>popen 调用 iat_online_sample（libmsc.so，appid 与库绑定），stdout 只取识别纯文本；识别为空时回“没有听清”兜底语</p>
+        </content>
+      </shape>
+      <line id="bdN" startX="60" startY="426" endX="900.0005952378843" endY="426">
+        <border color="rgba(226, 232, 240, 1)" width="1"/>
+      </line>
+      <shape width="24" height="24" topLeftX="60" topLeftY="440" presetHandlers="0" type="rect" id="bdf">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>5</p>
+        </content>
+      </shape>
+      <shape width="140" height="28" topLeftX="96" topLeftY="438" type="text" id="bdF">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>大模型接入</p>
+        </content>
+      </shape>
+      <shape width="654" height="28" topLeftX="246" topLeftY="438" type="text" id="bdo">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)">
+          <p>Python 调 GLM-4-Flash，system prompt 限定 80 字内口语化回答以适配小屏；shell 单引号转义，避免中文标点打断命令</p>
+        </content>
+      </shape>
+      <shape width="60" height="18" topLeftX="840" topLeftY="506" type="text" id="bdc">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" textAlign="right" wrap="false">
+          <p>03 / 06</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bdR">
+      <content>
+        <p>这一页讲流程和关键技术。上方是一次对话的七步协议：板端先发文件名长度、文件大小和文件名，服务器回 OK 后才开始传音频内容，收齐再回一次 OK，保证文件完整。</p>
+        <p>之后服务器内部完成讯飞听写和 GLM 生成，最后用四字节长度加 UTF-8 文本把回答回传，整条链路复用同一个 TCP 连接。</p>
+        <p>下方是五个关键技术点：触摸事件读取与坐标映射、ALSA 录音和 framebuffer 显示、自定义可靠传输解决粘包半包、popen 串联讯飞听写、以及智谱大模型调用和 prompt 适配小屏。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pAz">
+    <style>
+      <fill id="fAz">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="400" height="20" topLeftX="60" topLeftY="34" type="text" id="bzv">
+        <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" letterSpacing="2" wrap="false">
+          <p>03 团队分工</p>
+        </content>
+      </shape>
+      <shape width="840" height="36" topLeftX="60" topLeftY="56" type="text" id="bdD">
+        <content textType="title" fontSize="24" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>六人按模块并行开发，组长负责架构、集成与统稿</p>
+        </content>
+      </shape>
+      <line id="bdY" startX="60" startY="100" endX="900.0005952378843" endY="100">
+        <border color="rgba(212, 229, 247, 1)" width="1"/>
+      </line>
+      <table id="bdL" width="840" height="370" topLeftX="60" topLeftY="116">
+        <colgroup>
+          <col span="1" width="130"/>
+          <col span="1" width="150"/>
+          <col span="1" width="380"/>
+          <col span="1" width="180"/>
+        </colgroup>
+        <tr height="40">
+          <td id="bdp">
+            <fill>
+              <fillColor color="rgba(0, 48, 135, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>成员（角色）</p>
+            </content>
+          </td>
+          <td id="bdB">
+            <fill>
+              <fillColor color="rgba(0, 48, 135, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>负责模块</p>
+            </content>
+          </td>
+          <td id="bzi">
+            <fill>
+              <fillColor color="rgba(0, 48, 135, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>主要工作</p>
+            </content>
+          </td>
+          <td id="bzQ">
+            <fill>
+              <fillColor color="rgba(0, 48, 135, 1)"/>
+            </fill>
+            <content fontSize="12" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>交付物</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bdq">
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true" lineSpacing="multiple:1.3">
+              <p>李强</p>
+              <p>（组长）</p>
+            </content>
+          </td>
+          <td id="bdh">
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>架构与集成、服务器框架</p>
+            </content>
+          </td>
+          <td id="bzU">
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" lineSpacing="multiple:1.3" textAlign="left">
+              <p>总体方案与通信协议设计；server.c 主流程（accept、收发编排、异常处理）；两端联调、进度统筹与材料统稿</p>
+            </content>
+          </td>
+          <td id="bzV">
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>server.c、协议设计</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bdA">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true">
+              <p>钟劲翔</p>
+            </content>
+          </td>
+          <td id="bdg">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>板端 LCD 显示</p>
+            </content>
+          </td>
+          <td id="bzy">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" lineSpacing="multiple:1.3" textAlign="left">
+              <p>/dev/fb0 显存 mmap 映射；libfont 加载 TTF 字库；UTF-8 逐字符排版、按屏宽自动折行与裁剪</p>
+            </content>
+          </td>
+          <td id="bzK">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>显示与排版模块</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bdz">
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true">
+              <p>甘智星</p>
+            </content>
+          </td>
+          <td id="bdj">
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>触摸交互界面</p>
+            </content>
+          </td>
+          <td id="bdO">
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" lineSpacing="multiple:1.3" textAlign="left">
+              <p>gslX680 evdev 事件读取；EVIOCGABS 坐标范围获取与线性映射、方向标定；按钮绘制与按下高亮、抬手触发状态机</p>
+            </content>
+          </td>
+          <td id="bzx">
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>touch_ui.c / .h</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bzG">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true">
+              <p>杨毅</p>
+            </content>
+          </td>
+          <td id="bdd">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>录音与板端网络</p>
+            </content>
+          </td>
+          <td id="bdm">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" lineSpacing="multiple:1.3" textAlign="left">
+              <p>ALSA arecord 录音参数调通；TCP 客户端连接、send_all/recv_all 可靠收发与 WAV 上传；板端主流程串联</p>
+            </content>
+          </td>
+          <td id="bzW">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>client.c 采集/网络</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bzb">
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true">
+              <p>高原</p>
+            </content>
+          </td>
+          <td id="bzw">
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>服务器工程化</p>
+            </content>
+          </td>
+          <td id="bdC">
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" lineSpacing="multiple:1.3" textAlign="left">
+              <p>录音文件接收落盘与路径穿越校验；popen 进程编排与输出收集；shell 单引号转义、识别失败与服务异常的兜底回复</p>
+            </content>
+          </td>
+          <td id="bzf">
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>server.c 健壮性</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="55">
+          <td id="bzF">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="11" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true">
+              <p>冯志松</p>
+            </content>
+          </td>
+          <td id="bzo">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>AI 能力对接</p>
+            </content>
+          </td>
+          <td id="bdu">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" lineSpacing="multiple:1.3" textAlign="left">
+              <p>讯飞 IAT 在线听写集成（libmsc.so、appid 绑定、音频格式匹配）；智谱 GLM-4-Flash API 对接与 system prompt 调优</p>
+            </content>
+          </td>
+          <td id="bdJ">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>iat 程序、zhipu_ai.py</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="700" height="18" topLeftX="60" topLeftY="494" type="text" id="bzn">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" wrap="false">
+          <p>测试与文档：六人各自完成模块单元自测，组长负责集成测试、联调排障与答辩材料统稿</p>
+        </content>
+      </shape>
+      <shape width="60" height="18" topLeftX="840" topLeftY="506" type="text" id="bze">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" textAlign="right" wrap="false">
+          <p>04 / 06</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bzH">
+      <content>
+        <p>这一页是六人分工，模块切分和代码目录一一对应，工作量尽量均衡。</p>
+        <p>李强任组长，负责总体架构、通信协议和服务器主流程，并统筹联调和统稿；钟劲翔负责 framebuffer 显示和汉字排版；甘智星负责电容触摸交互模块；杨毅负责录音和板端网络客户端；高原负责服务器的文件接收、进程编排和健壮性；冯志松负责讯飞听写和智谱大模型两部分 AI 能力。</p>
+        <p>每位同学同时负责自己模块的单元测试，最后由组长统一集成。答辩时每个人负责讲解自己模块对应的关键技术页。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pAw">
+    <style>
+      <fill id="fAw">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="400" height="20" topLeftX="60" topLeftY="34" type="text" id="bAZ">
+        <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" letterSpacing="2" wrap="false">
+          <p>04 系统测试</p>
+        </content>
+      </shape>
+      <shape width="840" height="36" topLeftX="60" topLeftY="56" type="text" id="bqX">
+        <content textType="title" fontSize="24" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>六类用例全部通过，四个典型问题均定位根因并修复</p>
+        </content>
+      </shape>
+      <line id="bqn" startX="60" startY="100" endX="900.0005952378843" endY="100">
+        <border color="rgba(212, 229, 247, 1)" width="1"/>
+      </line>
+      <shape width="410" height="16" topLeftX="60" topLeftY="108" type="text" id="bqe">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" wrap="false">
+          <p>测试环境：GEC6818（ARM Linux）与 WSL Ubuntu 直连同网段，云端走外网</p>
+        </content>
+      </shape>
+      <table id="bAB" width="410" height="296" topLeftX="60" topLeftY="128">
+        <colgroup>
+          <col span="1" width="200"/>
+          <col span="1" width="130"/>
+          <col span="1" width="80"/>
+        </colgroup>
+        <tr height="32">
+          <td id="bAC">
+            <fill>
+              <fillColor color="rgba(0, 48, 135, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>测试用例</p>
+            </content>
+          </td>
+          <td id="bAm">
+            <fill>
+              <fillColor color="rgba(0, 48, 135, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>预期结果</p>
+            </content>
+          </td>
+          <td id="bAJ">
+            <fill>
+              <fillColor color="rgba(0, 48, 135, 1)"/>
+            </fill>
+            <content fontSize="10.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+              <p>结论</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bqx">
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left">
+              <p>点按开始，录音并上传</p>
+            </content>
+          </td>
+          <td id="bqG">
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>状态屏依次切换</p>
+            </content>
+          </td>
+          <td id="bAd">
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" bold="true">
+              <p>通过</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bAj">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left">
+              <p>识别与 GLM 回答回传</p>
+            </content>
+          </td>
+          <td id="bAI">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>LCD 自动换行</p>
+            </content>
+          </td>
+          <td id="bqy">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" bold="true">
+              <p>通过</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bqK">
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left">
+              <p>连续多轮对话</p>
+            </content>
+          </td>
+          <td id="bAz">
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>连接正常重建</p>
+            </content>
+          </td>
+          <td id="bAg">
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" bold="true">
+              <p>通过</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bAO">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left">
+              <p>服务器未启动 / 断网</p>
+            </content>
+          </td>
+          <td id="bqU">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>提示失败不卡死</p>
+            </content>
+          </td>
+          <td id="bqV">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" bold="true">
+              <p>通过</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bAA">
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left">
+              <p>识别为空 / AI 异常</p>
+            </content>
+          </td>
+          <td id="bAh">
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>兜底语回复</p>
+            </content>
+          </td>
+          <td id="bAc">
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" bold="true">
+              <p>通过</p>
+            </content>
+          </td>
+        </tr>
+        <tr height="44">
+          <td id="bqi">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)" textAlign="left">
+              <p>按在按钮外或滑出</p>
+            </content>
+          </td>
+          <td id="bqQ">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(30, 41, 59, 1)">
+              <p>不误触发</p>
+            </content>
+          </td>
+          <td id="bAq">
+            <fill>
+              <fillColor color="rgba(242, 246, 252, 1)"/>
+            </fill>
+            <content fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" bold="true">
+              <p>通过</p>
+            </content>
+          </td>
+        </tr>
+      </table>
+      <shape width="410" height="30" topLeftX="60" topLeftY="436" type="text" id="bAt">
+        <content fontSize="10.5" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true" wrap="false">
+          <p>连续 20 轮以上回归，未出现丢包、花屏或崩溃</p>
+        </content>
+      </shape>
+      <shape width="400" height="16" topLeftX="500" topLeftY="108" type="text" id="bqH">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" wrap="false">
+          <p>调试中的四个典型问题与解决办法</p>
+        </content>
+      </shape>
+      <shape width="400" height="22" topLeftX="500" topLeftY="130" type="text" id="bqv">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>1 TCP 粘包 / 半包导致文件截断</p>
+        </content>
+      </shape>
+      <shape width="400" height="36" topLeftX="500" topLeftY="154" type="text" id="bAp">
+        <content fontSize="10.5" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>定长头声明字节数，send_all/recv_all 循环收发严格收齐，两次 OK 握手确认</p>
+        </content>
+      </shape>
+      <line id="bAD" startX="500" startY="208" endX="900.0012499980469" endY="208">
+        <border color="rgba(226, 232, 240, 1)" width="1"/>
+      </line>
+      <shape width="400" height="22" topLeftX="500" topLeftY="218" type="text" id="bAY">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>2 触摸原始坐标与屏幕像素不一致</p>
+        </content>
+      </shape>
+      <shape width="400" height="36" topLeftX="500" topLeftY="242" type="text" id="bqf">
+        <content fontSize="10.5" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>EVIOCGABS 读取轴范围线性映射到 800×480，预留 X/Y 交换与镜像宏一次标定</p>
+        </content>
+      </shape>
+      <line id="bqF" startX="500" startY="296" endX="900.0012499980469" endY="296">
+        <border color="rgba(226, 232, 240, 1)" width="1"/>
+      </line>
+      <shape width="400" height="22" topLeftX="500" topLeftY="306" type="text" id="bqo">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>3 字库头文件宏冲突导致交叉编译失败</p>
+        </content>
+      </shape>
+      <shape width="400" height="36" topLeftX="500" topLeftY="330" type="text" id="bAu">
+        <content fontSize="10.5" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>font.h 中 #define color u32 会替换参数名，颜色入参统一改名 clr 后编译通过</p>
+        </content>
+      </shape>
+      <line id="bAL" startX="500" startY="384" endX="900.0012499980469" endY="384">
+        <border color="rgba(226, 232, 240, 1)" width="1"/>
+      </line>
+      <shape width="400" height="22" topLeftX="500" topLeftY="394" type="text" id="bAk">
+        <content fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>4 WSL 与开发板直连互通及动态库路径</p>
+        </content>
+      </shape>
+      <shape width="400" height="36" topLeftX="500" topLeftY="418" type="text" id="bqW">
+        <content fontSize="10.5" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>两端固定同网段 link-local 地址；libmsc.so 经 rpath 写入可执行文件，免 export 库路径</p>
+        </content>
+      </shape>
+      <line id="bqb" startX="500" startY="472" endX="900.0012499980469" endY="472">
+        <border color="rgba(226, 232, 240, 1)" width="1"/>
+      </line>
+      <shape width="60" height="18" topLeftX="840" topLeftY="506" type="text" id="bqw">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" textAlign="right" wrap="false">
+          <p>05 / 06</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bAE">
+      <content>
+        <p>测试方面，环境是 GEC6818 和 WSL 服务器网线直连同网段，讯飞和智谱走外网。我们设计了六类用例：正常录音上传、回答回显、连续多轮、网络异常、识别为空或 AI 异常、以及触摸误触，全部通过，并做了二十轮以上回归。</p>
+        <p>右侧是调试中最有代表性的四个问题：第一是 TCP 粘包半包，用定长头加循环收发和双 OK 解决；第二是触摸坐标和像素对不上，用 EVIOCGABS 自动映射，加标定宏兜底；第三是字库头文件里的宏把颜色参数名替换导致编译失败，改名规避；第四是 WSL 直连网络和动态库搜索路径，用固定同网段地址和 rpath 解决。</p>
+      </content>
+    </note>
+  </slide>
+  <slide id="pAK">
+    <style>
+      <fill id="fAK">
+        <fillColor color="rgba(255, 255, 255, 1)"/>
+      </fill>
+    </style>
+    <data>
+      <shape width="400" height="20" topLeftX="60" topLeftY="34" type="text" id="bqc">
+        <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" letterSpacing="2" wrap="false">
+          <p>05 总结与展望</p>
+        </content>
+      </shape>
+      <shape width="840" height="36" topLeftX="60" topLeftY="56" type="text" id="bqR">
+        <content textType="title" fontSize="24" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>端云协同语音问答闭环已跑通，三个方向可持续迭代</p>
+        </content>
+      </shape>
+      <line id="bqh" startX="60" startY="100" endX="900.0005952378843" endY="100">
+        <border color="rgba(212, 229, 247, 1)" width="1"/>
+      </line>
+      <shape width="400" height="22" topLeftX="60" topLeftY="116" type="text" id="bqE">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true" wrap="false">
+          <p>项目成果与收获</p>
+        </content>
+      </shape>
+      <line id="bqP" startX="60" startY="142" endX="460.0012499980469" endY="142">
+        <border color="rgba(0, 48, 135, 1)"/>
+      </line>
+      <shape width="22" height="22" topLeftX="60" topLeftY="158" presetHandlers="0" type="rect" id="bqr">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="10" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>1</p>
+        </content>
+      </shape>
+      <shape width="368" height="22" topLeftX="92" topLeftY="156" type="text" id="bqm">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>打通端云协同完整闭环</p>
+        </content>
+      </shape>
+      <shape width="368" height="44" topLeftX="92" topLeftY="180" type="text" id="bqI">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>点屏即说、开口即答，触摸、录音、上传、识别、生成与屏幕回显全链路贯通，全程无需键盘</p>
+        </content>
+      </shape>
+      <shape width="22" height="22" topLeftX="60" topLeftY="252" presetHandlers="0" type="rect" id="bqs">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="10" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>2</p>
+        </content>
+      </shape>
+      <shape width="368" height="22" topLeftX="92" topLeftY="250" type="text" id="bqj">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>沉淀嵌入式工程能力</p>
+        </content>
+      </shape>
+      <shape width="368" height="44" topLeftX="92" topLeftY="274" type="text" id="bqO">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>实践 ARM 交叉编译、framebuffer 显示、evdev 输入、ALSA 录音与 TCP 自定义协议可靠收发</p>
+        </content>
+      </shape>
+      <shape width="22" height="22" topLeftX="60" topLeftY="346" presetHandlers="0" type="rect" id="bqa">
+        <fill>
+          <fillColor color="rgba(0, 48, 135, 1)"/>
+        </fill>
+        <content fontSize="10" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>3</p>
+        </content>
+      </shape>
+      <shape width="368" height="22" topLeftX="92" topLeftY="344" type="text" id="bqu">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>系统稳定、异常可控</p>
+        </content>
+      </shape>
+      <shape width="368" height="44" topLeftX="92" topLeftY="368" type="text" id="bqL">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>云端 ASR 与大模型级联、popen 进程编排；断网、识别为空、服务异常均有提示或兜底回复</p>
+        </content>
+      </shape>
+      <shape width="400" height="22" topLeftX="500" topLeftY="116" type="text" id="bqS">
+        <content fontSize="14" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true" wrap="false">
+          <p>不足与改进方向</p>
+        </content>
+      </shape>
+      <line id="bqT" startX="500" startY="142" endX="900.0012499980469" endY="142">
+        <border color="rgba(0, 48, 135, 1)"/>
+      </line>
+      <shape width="22" height="22" topLeftX="500" topLeftY="158" presetHandlers="0" type="rect" id="bqC">
+        <fill>
+          <fillColor color="rgba(0, 112, 186, 1)"/>
+        </fill>
+        <content fontSize="10" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>1</p>
+        </content>
+      </shape>
+      <shape width="368" height="22" topLeftX="532" topLeftY="156" type="text" id="bqJ">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>录音方式更自然</p>
+        </content>
+      </shape>
+      <shape width="368" height="44" topLeftX="532" topLeftY="180" type="text" id="bqk">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>由固定录音 3 秒，升级为按住说话、松手结束，并引入 VAD 静音检测自动断句</p>
+        </content>
+      </shape>
+      <shape width="22" height="22" topLeftX="500" topLeftY="252" presetHandlers="0" type="rect" id="bqM">
+        <fill>
+          <fillColor color="rgba(0, 112, 186, 1)"/>
+        </fill>
+        <content fontSize="10" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>2</p>
+        </content>
+      </shape>
+      <shape width="368" height="22" topLeftX="532" topLeftY="250" type="text" id="bqp">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>支持多轮上下文</p>
+        </content>
+      </shape>
+      <shape width="368" height="44" topLeftX="532" topLeftY="274" type="text" id="bqB">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>当前为单轮问答，后续在服务器维护会话历史，让大模型结合上下文连续作答</p>
+        </content>
+      </shape>
+      <shape width="22" height="22" topLeftX="500" topLeftY="346" presetHandlers="0" type="rect" id="bqZ">
+        <fill>
+          <fillColor color="rgba(0, 112, 186, 1)"/>
+        </fill>
+        <content fontSize="10" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" bold="true">
+          <p>3</p>
+        </content>
+      </shape>
+      <shape width="368" height="22" topLeftX="532" topLeftY="344" type="text" id="bql">
+        <content fontSize="12.5" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" bold="true" wrap="false">
+          <p>弱网与离线可用</p>
+        </content>
+      </shape>
+      <shape width="368" height="44" topLeftX="532" topLeftY="368" type="text" id="bqD">
+        <content fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.4">
+          <p>现依赖外网访问云端服务，后续加入本地唤醒词与轻量化识别，弱网环境下也能基础可用</p>
+        </content>
+      </shape>
+      <line id="bqY" startX="60" startY="446" endX="900.0005952378843" endY="446">
+        <border color="rgba(212, 229, 247, 1)" width="1"/>
+      </line>
+      <shape width="840" height="30" topLeftX="60" topLeftY="458" type="text" id="bqt">
+        <content fontSize="15" fontFamily="思源黑体" color="rgba(0, 48, 135, 1)" bold="true" textAlign="center" wrap="false">
+          <p>汇报完毕，恳请各位老师批评指正</p>
+        </content>
+      </shape>
+      <shape width="60" height="18" topLeftX="840" topLeftY="506" type="text" id="bqN">
+        <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" textAlign="right" wrap="false">
+          <p>06 / 06</p>
+        </content>
+      </shape>
+    </data>
+    <note id="bqg">
+      <content>
+        <p>最后是总结。成果方面，我们完整打通了从触摸采集、可靠上传，到云端识别、大模型生成，再到屏幕回显的闭环，实现了零键盘操作；同时全组实践了交叉编译、framebuffer、evdev、ALSA 和 TCP 自定义协议等一整套嵌入式开发技能；系统对断网、识别为空等异常都做了兜底，可以连续稳定运行。</p>
+        <p>展望有三点：把固定三秒录音升级为按住说话加静音自动断句；从单轮问答扩展到带上下文的多轮对话；以及引入本地唤醒和轻量识别，降低对外网的依赖。</p>
+        <p>我的汇报到此结束，恳请各位老师批评指正，谢谢。</p>
+      </content>
+    </note>
+  </slide>
+</presentation>

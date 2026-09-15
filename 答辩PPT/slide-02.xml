@@ -1,0 +1,160 @@
+<slide xmlns="https://www.larkoffice.com/sml/2.0">
+  <style>
+    <fill>
+      <fillColor color="rgb(255, 255, 255)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="34" width="400" height="20">
+      <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" letterSpacing="2" wrap="false">
+        <p>01  项目概述与总体架构</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="56" width="840" height="36">
+      <content textType="title" fontSize="24" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>端云分工：板端负责触摸、录音与显示，云端负责识别与生成</p>
+      </content>
+    </shape>
+    <line startX="60" startY="100" endX="900" endY="100">
+      <border color="rgb(212, 229, 247)" width="1"/>
+    </line>
+    <shape type="text" topLeftX="60" topLeftY="110" width="840" height="70">
+      <content textType="body" fontSize="13" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" lineSpacing="multiple:1.6">
+        <p><span bold="true" color="rgba(0, 48, 135, 1)">背景：</span>传统开发板演示依赖串口敲命令，需接键盘、步骤繁琐，现场交互不直观。</p>
+        <p><span bold="true" color="rgba(0, 48, 135, 1)">目标：</span>实现“点屏即说、开口即答”、全程零键盘的嵌入式语音问答终端，支持连续多轮对话。</p>
+        <p><span bold="true" color="rgba(0, 48, 135, 1)">约束：</span>板端算力有限，语音识别与大模型推理部署在电脑服务器，板端只做采集、交互与回显。</p>
+      </content>
+    </shape>
+
+    <shape type="rect" topLeftX="48" topLeftY="188" width="404" height="304">
+      <fill><fillColor color="rgba(212, 229, 247, 0.55)"/></fill>
+      <content textType="body" fontSize="13" fontFamily="思源黑体" bold="true" color="rgba(0, 48, 135, 1)" textAlign="left" verticalAlign="top">
+        <p>板端 · GEC6818（ARM Linux，800×480 触摸 LCD）</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="60" topLeftY="226" width="380" height="48">
+      <fill><fillColor color="rgb(255, 255, 255)"/></fill>
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <content textType="body" fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" textAlign="center" verticalAlign="middle">
+        <p>触摸交互界面  gslX680 电容屏 / evdev 按钮事件</p>
+      </content>
+    </shape>
+    <line startX="250" startY="276" endX="250" endY="282">
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="60" topLeftY="284" width="380" height="48">
+      <fill><fillColor color="rgb(255, 255, 255)"/></fill>
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <content textType="body" fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" textAlign="center" verticalAlign="middle">
+        <p>语音采集  arecord：16 kHz / 单声道 / S16_LE</p>
+      </content>
+    </shape>
+    <line startX="250" startY="334" endX="250" endY="340">
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="60" topLeftY="342" width="380" height="48">
+      <fill><fillColor color="rgb(255, 255, 255)"/></fill>
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <content textType="body" fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" textAlign="center" verticalAlign="middle">
+        <p>TCP 客户端  socket 连接并上传 cmd.wav</p>
+      </content>
+    </shape>
+    <line startX="250" startY="392" endX="250" endY="398">
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="60" topLeftY="400" width="380" height="48">
+      <fill><fillColor color="rgb(255, 255, 255)"/></fill>
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <content textType="body" fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" textAlign="center" verticalAlign="middle">
+        <p>结果显示  /dev/fb0 + libfont 汉字自动换行</p>
+      </content>
+    </shape>
+
+    <shape type="rect" topLeftX="508" topLeftY="188" width="404" height="304">
+      <fill><fillColor color="rgba(212, 229, 247, 0.55)"/></fill>
+      <content textType="body" fontSize="13" fontFamily="思源黑体" bold="true" color="rgba(0, 48, 135, 1)" textAlign="left" verticalAlign="top">
+        <p>服务器 · WSL Ubuntu（x86_64，常驻服务）</p>
+      </content>
+    </shape>
+    <shape type="rect" topLeftX="520" topLeftY="226" width="380" height="48">
+      <fill><fillColor color="rgb(255, 255, 255)"/></fill>
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <content textType="body" fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" textAlign="center" verticalAlign="middle">
+        <p>TCP 服务器  监听 8888、按协议接收并落盘</p>
+      </content>
+    </shape>
+    <line startX="710" startY="276" endX="710" endY="282">
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="520" topLeftY="284" width="380" height="48">
+      <fill><fillColor color="rgb(255, 255, 255)"/></fill>
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <content textType="body" fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" textAlign="center" verticalAlign="middle">
+        <p>讯飞 IAT 在线听写  libmsc.so 语音转文字</p>
+      </content>
+    </shape>
+    <line startX="710" startY="334" endX="710" endY="340">
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="520" topLeftY="342" width="380" height="48">
+      <fill><fillColor color="rgb(255, 255, 255)"/></fill>
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <content textType="body" fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" textAlign="center" verticalAlign="middle">
+        <p>智谱 GLM-4-Flash  zhipu_ai.py 生成回答</p>
+      </content>
+    </shape>
+    <line startX="710" startY="392" endX="710" endY="398">
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="520" topLeftY="400" width="380" height="48">
+      <fill><fillColor color="rgb(255, 255, 255)"/></fill>
+      <border color="rgb(0, 112, 186)" width="1"/>
+      <content textType="body" fontSize="12" fontFamily="思源黑体" color="rgba(0, 28, 84, 1)" textAlign="center" verticalAlign="middle">
+        <p>回答回传  4 字节长度 + UTF-8 文本</p>
+      </content>
+    </shape>
+
+    <line startX="454" startY="312" endX="506" endY="312">
+      <border color="rgb(0, 48, 135)" width="2"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="text" topLeftX="454" topLeftY="288" width="52" height="16">
+      <content textType="caption" fontSize="9" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" textAlign="center" wrap="false">
+        <p>WAV 上传</p>
+      </content>
+    </shape>
+    <line startX="506" startY="368" endX="454" endY="368">
+      <border color="rgb(0, 48, 135)" width="2"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="text" topLeftX="454" topLeftY="372" width="52" height="16">
+      <content textType="caption" fontSize="9" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" textAlign="center" wrap="false">
+        <p>回答回传</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="506" width="200" height="18">
+      <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" wrap="false">
+        <p>同一条 TCP 连接完成全流程</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="840" topLeftY="506" width="60" height="18">
+      <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" textAlign="right" wrap="false">
+        <p>02 / 06</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这一页是系统总体架构。我们采用端云分工：开发板算力有限，所以把重计算放在服务器，板端只做四件事——触摸交互、录音、网络上传和屏幕显示。</p>
+      <p>左侧是板端 GEC6818：gslX680 电容屏采集触摸事件，arecord 按讯飞要求录成 16k 单声道 16 位的 WAV，通过 TCP 上传，最后把回答渲染到 framebuffer 屏幕。</p>
+      <p>右侧是 WSL 服务器：8888 端口常驻监听，收到音频后用 popen 依次调用讯飞在线听写和智谱 GLM-4-Flash，再把回答沿同一条连接回传。中间两条箭头分别表示上传 WAV 和回传回答。</p>
+    </content>
+  </note>
+</slide>

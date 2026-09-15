@@ -1,0 +1,201 @@
+<slide xmlns="https://www.larkoffice.com/sml/2.0">
+  <style>
+    <fill>
+      <fillColor color="rgb(255, 255, 255)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="60" topLeftY="34" width="400" height="20">
+      <content textType="caption" fontSize="11" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" letterSpacing="2" wrap="false">
+        <p>02  工作流程与关键技术</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="60" topLeftY="56" width="840" height="36">
+      <content textType="title" fontSize="24" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" wrap="false">
+        <p>一条 TCP 连接串起七步协议，五个技术点保证链路可靠</p>
+      </content>
+    </shape>
+    <line startX="60" startY="100" endX="900" endY="100">
+      <border color="rgb(212, 229, 247)" width="1"/>
+    </line>
+
+    <shape type="text" topLeftX="60" topLeftY="108" width="840" height="16">
+      <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" wrap="false">
+        <p>一次对话的七步协议时序（深蓝为板端动作，中蓝为服务器动作）</p>
+      </content>
+    </shape>
+
+    <shape type="rect" topLeftX="60" topLeftY="128" width="104" height="52">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle" lineSpacing="multiple:1.3">
+        <p>1 发文件头</p><p>长度+大小+名</p>
+      </content>
+    </shape>
+    <line startX="166" startY="154" endX="176" endY="154">
+      <border color="rgb(0, 48, 135)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="178" topLeftY="128" width="104" height="52">
+      <fill><fillColor color="rgb(0, 112, 186)"/></fill>
+      <content textType="body" fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle" lineSpacing="multiple:1.3">
+        <p>2 回复 OK</p><p>确认文件信息</p>
+      </content>
+    </shape>
+    <line startX="284" startY="154" endX="294" endY="154">
+      <border color="rgb(0, 48, 135)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="296" topLeftY="128" width="104" height="52">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle" lineSpacing="multiple:1.3">
+        <p>3 上传 WAV</p><p>按字节发完</p>
+      </content>
+    </shape>
+    <line startX="402" startY="154" endX="412" endY="154">
+      <border color="rgb(0, 48, 135)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="414" topLeftY="128" width="104" height="52">
+      <fill><fillColor color="rgb(0, 112, 186)"/></fill>
+      <content textType="body" fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle" lineSpacing="multiple:1.3">
+        <p>4 回复 OK</p><p>确认完整落盘</p>
+      </content>
+    </shape>
+    <line startX="520" startY="154" endX="530" endY="154">
+      <border color="rgb(0, 48, 135)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="532" topLeftY="128" width="104" height="52">
+      <fill><fillColor color="rgb(0, 112, 186)"/></fill>
+      <content textType="body" fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle" lineSpacing="multiple:1.3">
+        <p>5 讯飞听写</p><p>语音转文字</p>
+      </content>
+    </shape>
+    <line startX="638" startY="154" endX="648" endY="154">
+      <border color="rgb(0, 48, 135)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="650" topLeftY="128" width="104" height="52">
+      <fill><fillColor color="rgb(0, 112, 186)"/></fill>
+      <content textType="body" fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle" lineSpacing="multiple:1.3">
+        <p>6 GLM 生成</p><p>大模型作答</p>
+      </content>
+    </shape>
+    <line startX="756" startY="154" endX="766" endY="154">
+      <border color="rgb(0, 48, 135)" width="1"/>
+      <endArrow type="arrow" widthScale="sm" heightScale="sm"/>
+    </line>
+    <shape type="rect" topLeftX="768" topLeftY="128" width="104" height="52">
+      <fill><fillColor color="rgb(0, 112, 186)"/></fill>
+      <content textType="body" fontSize="9.5" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle" lineSpacing="multiple:1.3">
+        <p>7 回传回答</p><p>长度加 UTF-8</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="60" topLeftY="192" width="400" height="16">
+      <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(0, 112, 186, 1)" wrap="false">
+        <p>五个关键技术点</p>
+      </content>
+    </shape>
+
+    <shape type="rect" topLeftX="60" topLeftY="216" width="24" height="24">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="11" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>1</p></content>
+    </shape>
+    <shape type="text" topLeftX="96" topLeftY="214" width="140" height="28">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" verticalAlign="middle" wrap="false">
+        <p>电容触摸交互</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="246" topLeftY="214" width="654" height="28">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" verticalAlign="middle">
+        <p>evdev 读取 /dev/input/event0，EVIOCGABS 自动获取坐标范围并线性映射到 800×480；按下高亮、抬手触发，滑出按钮不误触</p>
+      </content>
+    </shape>
+    <line startX="60" startY="258" endX="900" endY="258">
+      <border color="rgb(226, 232, 240)" width="1"/>
+    </line>
+
+    <shape type="rect" topLeftX="60" topLeftY="272" width="24" height="24">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="11" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>2</p></content>
+    </shape>
+    <shape type="text" topLeftX="96" topLeftY="270" width="140" height="28">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" verticalAlign="middle" wrap="false">
+        <p>录音与屏幕显示</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="246" topLeftY="270" width="654" height="28">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" verticalAlign="middle">
+        <p>arecord 固定 16 kHz / 单声道 / S16_LE 满足识别格式；mmap 映射 /dev/fb0，libfont 渲染 TTF 汉字，按 UTF-8 逐字符自动折行</p>
+      </content>
+    </shape>
+    <line startX="60" startY="314" endX="900" endY="314">
+      <border color="rgb(226, 232, 240)" width="1"/>
+    </line>
+
+    <shape type="rect" topLeftX="60" topLeftY="328" width="24" height="24">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="11" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>3</p></content>
+    </shape>
+    <shape type="text" topLeftX="96" topLeftY="326" width="140" height="28">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" verticalAlign="middle" wrap="false">
+        <p>自定义可靠传输</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="246" topLeftY="326" width="654" height="28">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" verticalAlign="middle">
+        <p>应用层协议定长头加变长体，htonl 统一网络字节序，send_all/recv_all 循环收发解决粘包半包，两次 OK 确认保证文件完整</p>
+      </content>
+    </shape>
+    <line startX="60" startY="370" endX="900" endY="370">
+      <border color="rgb(226, 232, 240)" width="1"/>
+    </line>
+
+    <shape type="rect" topLeftX="60" topLeftY="384" width="24" height="24">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="11" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>4</p></content>
+    </shape>
+    <shape type="text" topLeftX="96" topLeftY="382" width="140" height="28">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" verticalAlign="middle" wrap="false">
+        <p>讯飞在线听写</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="246" topLeftY="382" width="654" height="28">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" verticalAlign="middle">
+        <p>popen 调用 iat_online_sample（libmsc.so，appid 与库绑定），stdout 只取识别纯文本；识别为空时回“没有听清”兜底语</p>
+      </content>
+    </shape>
+    <line startX="60" startY="426" endX="900" endY="426">
+      <border color="rgb(226, 232, 240)" width="1"/>
+    </line>
+
+    <shape type="rect" topLeftX="60" topLeftY="440" width="24" height="24">
+      <fill><fillColor color="rgb(0, 48, 135)"/></fill>
+      <content textType="body" fontSize="11" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" textAlign="center" verticalAlign="middle"><p>5</p></content>
+    </shape>
+    <shape type="text" topLeftX="96" topLeftY="438" width="140" height="28">
+      <content textType="body" fontSize="12.5" fontFamily="思源黑体" bold="true" color="rgba(0, 28, 84, 1)" verticalAlign="middle" wrap="false">
+        <p>大模型接入</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="246" topLeftY="438" width="654" height="28">
+      <content textType="body" fontSize="11" fontFamily="思源黑体" color="rgba(71, 85, 105, 1)" verticalAlign="middle">
+        <p>Python 调 GLM-4-Flash，system prompt 限定 80 字内口语化回答以适配小屏；shell 单引号转义，避免中文标点打断命令</p>
+      </content>
+    </shape>
+
+    <shape type="text" topLeftX="840" topLeftY="506" width="60" height="18">
+      <content textType="caption" fontSize="10" fontFamily="思源黑体" color="rgba(138, 143, 148, 1)" textAlign="right" wrap="false">
+        <p>03 / 06</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>这一页讲流程和关键技术。上方是一次对话的七步协议：板端先发文件名长度、文件大小和文件名，服务器回 OK 后才开始传音频内容，收齐再回一次 OK，保证文件完整。</p>
+      <p>之后服务器内部完成讯飞听写和 GLM 生成，最后用四字节长度加 UTF-8 文本把回答回传，整条链路复用同一个 TCP 连接。</p>
+      <p>下方是五个关键技术点：触摸事件读取与坐标映射、ALSA 录音和 framebuffer 显示、自定义可靠传输解决粘包半包、popen 串联讯飞听写、以及智谱大模型调用和 prompt 适配小屏。</p>
+    </content>
+  </note>
+</slide>

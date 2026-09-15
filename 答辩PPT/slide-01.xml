@@ -1,0 +1,46 @@
+<slide xmlns="https://www.larkoffice.com/sml/2.0">
+  <style>
+    <fill>
+      <fillColor color="rgb(0, 48, 135)"/>
+    </fill>
+  </style>
+  <data>
+    <shape type="text" topLeftX="80" topLeftY="92" width="700" height="26">
+      <content textType="caption" fontSize="13" fontFamily="思源黑体" color="rgba(212, 229, 247, 1)" letterSpacing="2" wrap="false">
+        <p>企业实训项目答辩  ·  嵌入式 AI 语音交互</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="138" width="820" height="140">
+      <content textType="title" fontSize="44" fontFamily="思源黑体" bold="true" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.25">
+        <p>基于 GEC6818 与大模型的</p>
+        <p>AI 语音助手系统</p>
+      </content>
+    </shape>
+    <line startX="80" startY="300" endX="200" endY="300">
+      <border color="rgb(127, 178, 229)" width="3"/>
+    </line>
+    <shape type="text" topLeftX="80" topLeftY="316" width="820" height="30">
+      <content textType="body" fontSize="16" fontFamily="思源黑体" color="rgba(212, 229, 247, 1)">
+        <p>触摸屏点按提问，板端录音上传，云端讯飞听写与智谱 GLM 作答，结果回显 800×480 LCD</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="80" topLeftY="398" width="820" height="76">
+      <content textType="body" fontSize="15" fontFamily="思源黑体" color="rgba(255, 255, 255, 1)" lineSpacing="multiple:1.5">
+        <p>小组成员：李强（组长）、钟劲翔、甘智星、杨毅、高原、冯志松</p>
+        <p>技术栈：C/Python · TCP Socket · ALSA · Framebuffer · evdev · 讯飞 IAT · GLM-4-Flash</p>
+      </content>
+    </shape>
+    <shape type="text" topLeftX="700" topLeftY="496" width="180" height="24">
+      <content textType="caption" fontSize="13" fontFamily="思源黑体" color="rgba(212, 229, 247, 1)" textAlign="right" wrap="false">
+        <p>2026 年 9 月</p>
+      </content>
+    </shape>
+  </data>
+  <note>
+    <content textType="body">
+      <p>各位老师好，我们小组答辩的题目是基于 GEC6818 与大模型的 AI 语音助手系统。</p>
+      <p>用户在开发板触摸屏上点一下按钮、说一句话，录音会通过 TCP 上传到电脑服务器；服务器先用讯飞语音听写把语音转成文字，再调用智谱 GLM 大模型生成回答，最后把回答回传到开发板的 LCD 屏幕上显示。</p>
+      <p>我们小组共六人，由李强担任组长。下面我从系统架构、关键技术、人员分工、测试验证和总结展望五个方面汇报。</p>
+    </content>
+  </note>
+</slide>
